@@ -10,7 +10,7 @@ type Queue struct{
 }
 
 type Node struct{
-	value []byte
+	value interface{}
 	next *Node
 }
 
@@ -18,7 +18,7 @@ func NewQueue() *Queue{
 	return &Queue{dataLock:&sync.Mutex{}}
 }
 
-func (queue *Queue) Push(value []byte){
+func (queue *Queue) Push(value interface{}){
 	queue.dataLock.Lock()
 	defer queue.dataLock.Unlock()
 	queue.size++
@@ -31,7 +31,7 @@ func (queue *Queue) Push(value []byte){
 	queue.front = queue.back
 }
 
-func (queue *Queue) Peek() ([]byte,bool){
+func (queue *Queue) Peek() (interface{},bool){
 	queue.dataLock.Lock()
 	defer queue.dataLock.Unlock()
 	if queue.front != nil {
@@ -40,7 +40,7 @@ func (queue *Queue) Peek() ([]byte,bool){
 	return nil,false
 }
 
-func (queue *Queue) Pop() []byte{
+func (queue *Queue) Pop() interface{}{
 	queue.dataLock.Lock()
 	defer queue.dataLock.Unlock()
 	if queue.front == nil {

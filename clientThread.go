@@ -21,14 +21,9 @@ import (
 
 
 
-type ClientData struct{
-	conn net.Conn
-	lock *sync.RWMutex
-}
 
-func NewClientData(newConnection net.Conn) ClientData{
-	return ClientData{conn:newConnection,lock:&sync.RWMutex{}}
-}
+
+
 
 type Player struct{
 	playerData *PlayerData
@@ -38,10 +33,9 @@ type Player struct{
 	abilities map[int16]ability
 	localIDs int16
 	lock *sync.Mutex
-	lengthBuffer []byte
-	messageBuffer *bytes.Buffer
+
 	rnd *rand.Rand
-	reader *bufio.Reader
+
 }
 
 func NewPlayer(id int16, conn net.Conn)*Player{
@@ -49,7 +43,7 @@ func NewPlayer(id int16, conn net.Conn)*Player{
 	player.playerID = id
 	player.playerData = NewPlayerData()
 	player.clientData = NewClientData(conn)
-	player.lengthBuffer = make([]byte,2)
+
 	player.abilities = make(map[int16]ability)
 	player.messageBuffer = new(bytes.Buffer)
 	player.messageBuffer.Grow(256)
@@ -60,24 +54,7 @@ func NewPlayer(id int16, conn net.Conn)*Player{
 
 func (player *Player) mainLoop(){
 	for{
-		n, err := io.ReadFull(player.reader,player.lengthBuffer)
 
-		if err != nil {
-			log.Printf("Bytes read: %d\n", n)
-			log.Println(err)
-			break
-		}
-		binary.Read(bytes.NewReader(player.lengthBuffer),binary.LittleEndian,&player.messageLength)
-		message := make([]byte,player.messageLength)
-		n, err = player.reader.Read(message)
-		if err != nil{
-			log.Println(err)
-			if err == io.EOF{
-				continue
-			}else{
-				break
-			}
-		}
 		if len(message) > 1{
 			switch message[0]{
 			case SYNC:
