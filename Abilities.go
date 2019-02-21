@@ -20,7 +20,14 @@ func loadAbilityData() map[int16]abilityData{
 	return abilityList
 }
 
-type ability interface {
+type ability interface{
+	Use(clientID int16, location vector)
+	onStart(time time.Time)
+	onEnd()
+	onTick(time time.Time) bool
+}
+
+type tickAbility interface {
 	onStart(time time.Time)
 	onEnd()
 	onTick(time time.Time) bool
@@ -34,13 +41,15 @@ type statBuff struct{
 	duration time.Duration
 }
 
+
+
 func NewStatBuff(data abilityData, player int16) statBuff{
 	buff := statBuff{abilityID:data.abilityID,playerID:player,statMods:data.statMods,duration:data.duration}
 	return buff
 }
 
-func (statBuff *statBuff) onStart(time time.Time){
-	statBuff.startTime = time
+func (statBuff * statBuff) Use(clientID int16, _ vector){
+	statBuff.startTime = time.Time{}
 	tempStat := clientStats[statBuff.playerID]
 	for _,mod := range statBuff.statMods{
 		if mod.percent {
@@ -55,13 +64,13 @@ func (statBuff *statBuff) onStart(time time.Time){
 			percentOfTotal = tempStat.baseStats[mod.statID + 1000] / tempStat.totalStats[mod.statID]
 			tempStat.totalStats[mod.statID] = (tempStat.baseStats[mod.statID] + tempStat.flatMods[mod.statID]) * tempStat.multMods[mod.statID]
 			switch mod.resourceMode{
-				case MAX:
-					tempStat.baseStats[mod.statID + 1000] = tempStat.totalStats[mod.statID]
-				case MIN:
-					tempStat.baseStats[mod.statID + 1000] = tempStat.baseStats[mod.statID]
-				case PERCENT:
-					tempStat.baseStats[mod.statID + 1000] = percentOfTotal * tempStat.totalStats[mod.statID]
-				case NONE:
+			case MAX:
+				tempStat.baseStats[mod.statID + 1000] = tempStat.totalStats[mod.statID]
+			case MIN:
+				tempStat.baseStats[mod.statID + 1000] = tempStat.baseStats[mod.statID]
+			case PERCENT:
+				tempStat.baseStats[mod.statID + 1000] = percentOfTotal * tempStat.totalStats[mod.statID]
+			case NONE:
 			}
 
 			messageBuffer.WriteByte(STAT)
@@ -79,6 +88,10 @@ func (statBuff *statBuff) onStart(time time.Time){
 		binary.Write(messageBuffer,binary.LittleEndian,clientStats[statBuff.playerID].totalStats[mod.statID])
 		actions.Push(messageBuffer.Bytes())
 	}
+}
+
+func (statBuff *statBuff) onStart(time time.Time){
+
 }
 
 func (statBuff *statBuff ) onTick(time time.Time) bool{

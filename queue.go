@@ -31,6 +31,15 @@ func (queue *Queue) Push(value []byte){
 	queue.front = queue.back
 }
 
+func (queue *Queue) Peek() ([]byte,bool){
+	queue.dataLock.Lock()
+	defer queue.dataLock.Unlock()
+	if queue.front != nil {
+		return queue.front.value,true
+	}
+	return nil,false
+}
+
 func (queue *Queue) Pop() []byte{
 	queue.dataLock.Lock()
 	defer queue.dataLock.Unlock()

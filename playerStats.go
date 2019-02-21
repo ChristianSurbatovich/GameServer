@@ -91,3 +91,15 @@ type playerStats struct{
 	multMods map[int16]float32
 	totalStats map[int16]float32
 }
+
+func NewPlayerStats() playerStats {
+	 stats := playerStats{}
+	 stats.flatMods = initializePlayerFlatMod()
+	 stats.multMods = initializePlayerMultMod()
+	 stats.baseStats = initializePlayerBaseStats()
+	stats.totalStats = make(map[int16]float32)
+	for key,value := range stats.baseStats{
+		stats.totalStats[key] = (value + stats.flatMods[key]) * stats.multMods[key]
+	}
+	return stats
+}

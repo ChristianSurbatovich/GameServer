@@ -19,6 +19,9 @@ type genericStatItem struct{
 	statMods []statMod
 }
 
+type abilityItem struct{
+	itemID int16
+}
 
 func (item *genericStatItem) id() int16{
 	return item.itemID

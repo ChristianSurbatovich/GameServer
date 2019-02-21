@@ -13,14 +13,13 @@ type lootArea struct{
 }
 
 
-func (area *lootArea) generateLoot(itemList map[int16][]baseItem, IDcounter *int16){
+func (area *lootArea) generateLoot(itemList map[int16][]baseItem){
 	area.looted = true
 	area.lootList = make(map[int16]baseItem)
 	listLength := len(itemList[area.tier])
-	numItems := rand.Intn(4) + 1
-	for i := 0; i < numItems; i++{
-		area.lootList[*IDcounter] = itemList[area.tier][rand.Intn(listLength)]
-		*IDcounter++
+	numItems := int16(rand.Intn(4) + 1)
+	for i := int16(0); i < numItems; i++{
+		area.lootList[i] = itemList[area.tier][rand.Intn(listLength)]
 	}
 
 }

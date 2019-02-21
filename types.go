@@ -27,6 +27,7 @@ type playerInfo struct{
 type playerTransform struct{
 	playerPosition vector
 	playerRotation vector
+	playerVelocity vector
 	agentID int16
 	locationTime float32
 }
@@ -43,10 +44,13 @@ type agent struct{
 	name string
 }
 
+
+
+
 type shipState struct{
 	ID int16
 	doorsOpen bool
-	destructionState []bool
+	destructionState []byte
 	name string
 	state int16
 	startTime time.Time

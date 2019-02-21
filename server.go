@@ -10,10 +10,7 @@ import (
 	"bytes"
 	"encoding/binary"
 )
-var clients map[int16]*playerInfo
-var playerStates map[int16]*playerTransform
-var shipStates map[int16]*shipState
-var clientStats map[int16]playerStats
+var players map[int16]*Player
 var actions *Queue
 var stateLock sync.RWMutex
 var currentPlayerID int16 = 0
@@ -30,7 +27,7 @@ var startingHealth float32 = 110.0
 var playerEffects []ability
 var effectLock sync.Mutex
 var itemList map[int16][]baseItem
-
+var playerID int16 = 0
 var resetItemsOnDeath bool
 
 func spawnLoc(){
@@ -60,8 +57,8 @@ func processState(){
 	ticker := time.NewTicker(time.Millisecond * time.Duration(1000/serverTickRate))
 	for{
 		_ = <- ticker.C
-		for _, ps := range shipStates{
-			if clientStats[ps.ID].baseStats[CURRENT_HEALTH] <= 0 && ps.state == ALIVE{
+		for _, player := range players{
+			if player.playerData.stats.totalStats[CURRENT_HEALTH] <= 0 && player.playerData.state.state == ALIVE{
 				action1 := new(bytes.Buffer)
 				action1.WriteByte(EXPLODE)
 				binary.Write(action1,binary.LittleEndian,clients[ps.ID].transform.playerPosition.x)
@@ -131,6 +128,9 @@ func processState(){
 				binary.Write(message, binary.LittleEndian, pt.transform.playerRotation.x)
 				binary.Write(message, binary.LittleEndian, pt.transform.playerRotation.y)
 				binary.Write(message, binary.LittleEndian, pt.transform.playerRotation.z)
+				binary.Write(message, binary.LittleEndian, pt.transform.playerVelocity.x)
+				binary.Write(message, binary.LittleEndian, pt.transform.playerVelocity.y)
+				binary.Write(message, binary.LittleEndian, pt.transform.playerVelocity.z)
 				binary.Write(message, binary.LittleEndian, pt.transform.locationTime)
 			}
 
@@ -160,6 +160,7 @@ func listenFunc(){
 		if err != nil {
 			log.Println(err)
 		}else{
+			players[playerID] = NewPlayer(playerID,conn)
 			go handleClient(conn)
 		}
 
@@ -169,10 +170,7 @@ func listenFunc(){
 func main(){
 	log.Println("Started server")
 	ticker := time.NewTicker(time.Minute * 10)
-	clients = make(map[int16]*playerInfo)
-	playerStates = make(map[int16]*playerTransform)
-	shipStates = make(map[int16]*shipState)
-	clientStats = make(map[int16]playerStats)
+	players = make(map[int16]*Player)
 	nextSpawn = make(chan int)
 	actions = NewQueue()
 	abilityList = loadAbilityData()
