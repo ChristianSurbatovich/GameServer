@@ -1,5 +1,5 @@
 package main
 
 const(
-	PREFIX_SIZE = 2
+	PREFIX_SIZE = 4
 )

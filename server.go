@@ -10,6 +10,10 @@ import (
 	"bytes"
 	"encoding/binary"
 )
+
+
+
+
 var players map[int16]*Player
 var actions *Queue
 var stateLock sync.RWMutex
@@ -18,7 +22,7 @@ var IDlock sync.Mutex
 var ActionLock sync.Mutex
 var serverUpdateRate chan int
 var serverTickRate int16 = 20
-var serverTime = time.Now()
+var serverStartTime = time.Now()
 var abilityList map[int16]abilityData
 var spawnLocations = []vector{vector{0,0,0},vector{400,0,-400},vector{650,0,-180},vector{0,0,-400}}
 var respawnTime = 15 * time.Second
@@ -29,6 +33,12 @@ var effectLock sync.Mutex
 var itemList map[int16][]baseItem
 var playerID int16 = 0
 var resetItemsOnDeath bool
+
+
+type Server struct{
+	state GameState
+}
+
 
 func spawnLoc(){
 	next := 0
