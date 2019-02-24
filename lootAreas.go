@@ -4,16 +4,16 @@ import (
 	"math/rand"
 )
 
-type lootArea struct{
+type LootArea struct{
 	id int16
 	tier int16
 	randomSeed float32
 	looted bool
-	lootList map[int16]baseItem
+	lootList []int16
 }
 
 
-func (area *lootArea) generateLoot(itemList map[int16][]baseItem){
+func (area *LootArea) generateLoot(itemList map[int16][]baseItem){
 	area.looted = true
 	area.lootList = make(map[int16]baseItem)
 	listLength := len(itemList[area.tier])
@@ -24,18 +24,22 @@ func (area *lootArea) generateLoot(itemList map[int16][]baseItem){
 
 }
 
-func populateAreas()map[int16]lootArea{
-	list := make(map[int16]lootArea)
-	list[2000] = lootArea{2000,1,1,false,nil}
-	list[2001] = lootArea{2001,1,1,false,nil}
-	list[2002] = lootArea{2002,1,1,false,nil}
-	list[2003] = lootArea{2003,2,1,false,nil}
-	list[2004] = lootArea{2004,2,1,false,nil}
-	list[2005] = lootArea{2005,2,1,false,nil}
-	list[2006] = lootArea{2006,2,1,false,nil}
-	list[2007] = lootArea{2007,3,1,false,nil}
-	list[2008] = lootArea{2008,3,1,false,nil}
-	list[2009] = lootArea{2009,3,1,false,nil}
+func PopulateArea() LootArea{
+
+}
+
+func populateAreas()map[int16]LootArea {
+	list := make(map[int16]LootArea)
+	list[2000] = LootArea{2000,1,1,false,nil}
+	list[2001] = LootArea{2001,1,1,false,nil}
+	list[2002] = LootArea{2002,1,1,false,nil}
+	list[2003] = LootArea{2003,2,1,false,nil}
+	list[2004] = LootArea{2004,2,1,false,nil}
+	list[2005] = LootArea{2005,2,1,false,nil}
+	list[2006] = LootArea{2006,2,1,false,nil}
+	list[2007] = LootArea{2007,3,1,false,nil}
+	list[2008] = LootArea{2008,3,1,false,nil}
+	list[2009] = LootArea{2009,3,1,false,nil}
 	return list
 }
 

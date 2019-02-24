@@ -14,7 +14,7 @@ import (
 
 
 
-var players map[int16]*Player
+var gameState GameState
 var actions *Queue
 var stateLock sync.RWMutex
 var currentPlayerID int16 = 0
@@ -24,7 +24,7 @@ var serverUpdateRate chan int
 var serverTickRate int16 = 20
 var serverStartTime = time.Now()
 var abilityList map[int16]abilityData
-var spawnLocations = []vector{vector{0,0,0},vector{400,0,-400},vector{650,0,-180},vector{0,0,-400}}
+var spawnLocations = []Vector{Vector{0,0,0}, Vector{400,0,-400}, Vector{650,0,-180}, Vector{0,0,-400}}
 var respawnTime = 15 * time.Second
 var nextSpawn chan int
 var startingHealth float32 = 110.0

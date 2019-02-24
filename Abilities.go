@@ -21,7 +21,7 @@ func loadAbilityData() map[int16]abilityData{
 }
 
 type ability interface{
-	Use(clientID int16, location vector)
+	Use(clientID int16, location Vector)
 	onStart(time time.Time)
 	onEnd()
 	onTick(time time.Time) bool
@@ -48,7 +48,7 @@ func NewStatBuff(data abilityData, player int16) statBuff{
 	return buff
 }
 
-func (statBuff * statBuff) Use(clientID int16, _ vector){
+func (statBuff * statBuff) Use(clientID int16, _ Vector){
 	statBuff.startTime = time.Time{}
 	tempStat := clientStats[statBuff.playerID]
 	for _,mod := range statBuff.statMods{

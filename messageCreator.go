@@ -22,7 +22,7 @@ func setHeader(length int16, positions int16, actions int16, buffer *bytes.Buffe
 	binary.Write(buffer,binary.LittleEndian,actions)
 }
 
-func createAction(command byte, value int16, targetState *shipState, transform *playerTransform) []byte{
+func createAction(command byte, value int16, targetState *ShipData, transform *Transform) []byte{
 		buffer := new(bytes.Buffer)
 		switch command{
 		case HIT:
@@ -39,12 +39,12 @@ func createAction(command byte, value int16, targetState *shipState, transform *
 			break
 		case SPAWN:
 			binary.Write(buffer,binary.LittleEndian,SPAWN)
-			binary.Write(buffer,binary.LittleEndian,transform.playerPosition.x)
-			binary.Write(buffer,binary.LittleEndian,transform.playerPosition.y)
-			binary.Write(buffer,binary.LittleEndian,transform.playerPosition.z)
-			binary.Write(buffer,binary.LittleEndian,transform.playerRotation.x)
-			binary.Write(buffer,binary.LittleEndian,transform.playerRotation.y)
-			binary.Write(buffer,binary.LittleEndian,transform.playerRotation.z)
+			binary.Write(buffer,binary.LittleEndian,transform.position.x)
+			binary.Write(buffer,binary.LittleEndian,transform.position.y)
+			binary.Write(buffer,binary.LittleEndian,transform.position.z)
+			binary.Write(buffer,binary.LittleEndian,transform.rotation.x)
+			binary.Write(buffer,binary.LittleEndian,transform.rotation.y)
+			binary.Write(buffer,binary.LittleEndian,transform.rotation.z)
 			binary.Write(buffer,binary.LittleEndian,targetState.ID)
 			binary.Write(buffer,binary.LittleEndian,value)
 			binary.Write(buffer,binary.LittleEndian,targetState.doorsOpen)
@@ -75,7 +75,7 @@ func createAction(command byte, value int16, targetState *shipState, transform *
 		return buffer.Bytes()
 }
 
-func addMessage(command byte, value int16, targetState *shipState, transform *playerTransform, buffer *bytes.Buffer){
+func addMessage(command byte, value int16, targetState *ShipData, transform *Transform, buffer *bytes.Buffer){
 	switch command{
 	case REGISTER:
 		buffer.WriteByte(REGISTER)
@@ -84,12 +84,12 @@ func addMessage(command byte, value int16, targetState *shipState, transform *pl
 		break
 	case SPAWN:
 		binary.Write(buffer,binary.LittleEndian,SPAWN)
-		binary.Write(buffer,binary.LittleEndian,transform.playerPosition.x)
-		binary.Write(buffer,binary.LittleEndian,transform.playerPosition.y)
-		binary.Write(buffer,binary.LittleEndian,transform.playerPosition.z)
-		binary.Write(buffer,binary.LittleEndian,transform.playerRotation.x)
-		binary.Write(buffer,binary.LittleEndian,transform.playerRotation.y)
-		binary.Write(buffer,binary.LittleEndian,transform.playerRotation.z)
+		binary.Write(buffer,binary.LittleEndian,transform.position.x)
+		binary.Write(buffer,binary.LittleEndian,transform.position.y)
+		binary.Write(buffer,binary.LittleEndian,transform.position.z)
+		binary.Write(buffer,binary.LittleEndian,transform.rotation.x)
+		binary.Write(buffer,binary.LittleEndian,transform.rotation.y)
+		binary.Write(buffer,binary.LittleEndian,transform.rotation.z)
 		binary.Write(buffer,binary.LittleEndian,targetState.ID)
 		binary.Write(buffer,binary.LittleEndian,value)
 		binary.Write(buffer,binary.LittleEndian,targetState.doorsOpen)

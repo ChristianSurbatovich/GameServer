@@ -3,11 +3,12 @@ package main
 import (
 	"sync"
 	"encoding/binary"
+	"bytes"
 )
 
 type ItemMap struct{
 	inventory map[int16]*inventorySlot
-	lootAreas map[int16]lootArea
+	lootAreas map[int16]LootArea
 	bagSize int16
 	filledSpaces int16
 	bagStart int16
@@ -23,9 +24,22 @@ func NewItemMap() *ItemMap {
 	return &itemMap
 }
 
-func (itemMap *ItemMap) AddItemFromArea(lootArea int16, lootID int16, slotID int16){
-	if !itemMap.inventory[slotID].open {
+func (itemMap *ItemMap) LootArea(areaID int16) *RWMessage{
+	if _,exists := itemMap.lootAreas[areaID]; !exists{
+		itemMap.lootAreas[areaID] = PopulateArea()
+	}
+	message := &RWMessage{new(bytes.Buffer)}
+	message.WriteByte(LOOT_AREA)
+	message.Write(int16(len(itemMap.lootAreas[areaID].lootList)))
+	for _,id := range itemMap.lootAreas[areaID].lootList{
+		message.Write(id)
+	}
+	return message
+}
 
+func (itemMap *ItemMap) AddItemFromArea(lootArea int16, lootID int16, slotID int16)RWMessage{
+	if !itemMap.inventory[slotID].open {
+		item, exists :=
 	}else{
 
 	}

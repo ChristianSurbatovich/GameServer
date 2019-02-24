@@ -3,10 +3,10 @@ package main
 import "sync"
 
 type PlayerData struct{
-	transform *playerTransform
-	stats *playerStats
+	transform *Transform
+	stats *PlayerStats
 	items *ItemMap
-	state *shipState
+	state *ShipData
 	lock *sync.RWMutex
 }
 

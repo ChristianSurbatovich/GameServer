@@ -74,15 +74,15 @@ func (player *Player) mainLoop(){
 				messageReader := bytes.NewReader(message[3:])
 				player.playerData.lock.RLock()
 				transform := player.playerData.transform
-				binary.Read(messageReader,binary.LittleEndian,&transform.playerPosition.x)
-				binary.Read(messageReader,binary.LittleEndian,&transform.playerPosition.y)
-				binary.Read(messageReader,binary.LittleEndian,&transform.playerPosition.z)
-				binary.Read(messageReader,binary.LittleEndian,&transform.playerRotation.x)
-				binary.Read(messageReader,binary.LittleEndian,&transform.playerRotation.y)
-				binary.Read(messageReader,binary.LittleEndian,&transform.playerRotation.z)
-				binary.Read(messageReader,binary.LittleEndian,&transform.playerVelocity.x)
-				binary.Read(messageReader,binary.LittleEndian,&transform.playerVelocity.y)
-				binary.Read(messageReader,binary.LittleEndian,&transform.playerVelocity.z)
+				binary.Read(messageReader,binary.LittleEndian,&transform.position.x)
+				binary.Read(messageReader,binary.LittleEndian,&transform.position.y)
+				binary.Read(messageReader,binary.LittleEndian,&transform.position.z)
+				binary.Read(messageReader,binary.LittleEndian,&transform.rotation.x)
+				binary.Read(messageReader,binary.LittleEndian,&transform.rotation.y)
+				binary.Read(messageReader,binary.LittleEndian,&transform.rotation.z)
+				binary.Read(messageReader,binary.LittleEndian,&transform.velocity.x)
+				binary.Read(messageReader,binary.LittleEndian,&transform.velocity.y)
+				binary.Read(messageReader,binary.LittleEndian,&transform.velocity.z)
 				binary.Read(messageReader,binary.LittleEndian,&transform.locationTime)
 				player.playerData.lock.RUnlock()
 				// fire id numshots x1 y1 z1 x2 y2 z2 ...
@@ -132,8 +132,8 @@ func (player *Player) mainLoop(){
 			case SPAWN:
 				if player.playerData.state.canSpawn{
 					sL := <-nextSpawn
-					player.playerData.transform.playerPosition = vector{spawnLocations[sL].x,spawnLocations[sL].y,spawnLocations[sL].z}
-					player.playerData.transform.playerRotation = vector{0,float32(player.rnd.Intn(360)),0}
+					player.playerData.transform.position = Vector{spawnLocations[sL].x,spawnLocations[sL].y,spawnLocations[sL].z}
+					player.playerData.transform.rotation = Vector{0,float32(player.rnd.Intn(360)),0}
 					player.playerData.stats.totalStats[CURRENT_HEALTH] = player.playerData.stats.totalStats[MAX_HEALTH]
 					player.playerData.state.doorsOpen = false
 					player.playerData.state.alive = true
@@ -153,7 +153,7 @@ func (player *Player) mainLoop(){
 				actions.Push(action.Bytes())
 			case ABILITY:
 				var abilityID int16
-				var location vector
+				var location Vector
 				reader := bytes.NewReader(message[1:])
 				binary.Read(reader,binary.LittleEndian,&abilityID)
 				binary.Read(reader,binary.LittleEndian,&location)
@@ -242,9 +242,9 @@ func (player *Player) initialize(conn net.Conn, id int16){
 	}else{
 		client.clientData.clientID = id
 		sL := <-nextSpawn
-		client.player.transform = playerTransform{vector{spawnLocations[sL].x,spawnLocations[sL].y,spawnLocations[sL].z},vector{0,float32(client.rnd.Intn(360)),0},vector{0,0,0},client.clientData.clientID,0}
+		client.player.transform = Transform{Vector{spawnLocations[sL].x,spawnLocations[sL].y,spawnLocations[sL].z}, Vector{0,float32(client.rnd.Intn(360)),0}, Vector{0,0,0},client.clientData.clientID,0}
 
-		client.player.state = shipState{id,false,nil,"",ALIVE,time.Now(),true,true}
+		client.player.state = ShipData{id,false,nil,"",ALIVE,time.Now(),true,true}
 
 		newMessage(REGISTER_LENGTH,0,1,client.messageBuffer)
 		addMessage(REGISTER,0, &client.player.state,nil,client.messageBuffer)

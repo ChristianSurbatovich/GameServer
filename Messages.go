@@ -15,9 +15,10 @@ func (message *SyncMessage)GetType()byte{
 
 
 type PositionMessage struct{
-	actorID int16
-	position vector
-	rotation vector
+	actorID  int16
+	position Vector
+	rotation Vector
+	time float32
 }
 
 func (message *PositionMessage)GetType()byte{
@@ -25,9 +26,10 @@ func (message *PositionMessage)GetType()byte{
 }
 
 type VelocityMessage struct{
-	actorID int16
-	velocity vector
-	angularVelocity vector
+	actorID         int16
+	velocity        Vector
+	angularVelocity Vector
+	time float32
 }
 
 func (message *VelocityMessage)GetType()byte{
@@ -35,11 +37,12 @@ func (message *VelocityMessage)GetType()byte{
 }
 
 type FullPositionMessage struct{
-	actorID int16
-	position vector
-	rotation vector
-	velocity vector
-	angularVelocity vector
+	actorID         int16
+	position        Vector
+	rotation        Vector
+	velocity        Vector
+	angularVelocity Vector
+	time float32
 }
 
 func(message *FullPositionMessage)GetType()byte{
@@ -47,11 +50,12 @@ func(message *FullPositionMessage)GetType()byte{
 }
 
 type HitMessage struct{
-	reporter int16
-	eventID int16
+	reporter   int16
+	eventID    int16
 	targetType byte
-	targetID int16
-	offset vector
+	targetID   int16
+	offset     Vector
+	time float32
 }
 
 func(message *HitMessage)GetType()byte{
@@ -95,6 +99,15 @@ type MoveItemMessage struct{
 
 func(message *MoveItemMessage)GetType()byte{
 	return MOVE_ITEM
+}
+
+type LootAreaMessage struct{
+	actorID int16
+	areaID int16
+}
+
+func(message *LootAreaMessage)GetType()byte{
+	return LOOT_AREA
 }
 
 type NameMessage struct{
