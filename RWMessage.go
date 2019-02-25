@@ -14,6 +14,10 @@ func NewRWMessage(initialBuffer *bytes.Buffer) *RWMessage{
 	return &RWMessage{buffer:initialBuffer}
 }
 
+func (message *RWMessage)Reset(){
+	message.buffer.Reset()
+}
+
 func (message *RWMessage)UnreadData()bool{
 	return message.buffer.Len() > 0
 }
@@ -107,4 +111,8 @@ func (message *RWMessage)WriteString(s string){
 	for _,b := range stringBytes{
 		message.WriteByte(b)
 	}
+}
+
+func (message *RWMessage)String()string{
+	return message.buffer.String()
 }
